@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    image: counter-app:1.0
+    env_file:
+      - ./backend/.env
+    ports:
+      - target: 8000
+        published: 80
+        protocol: tcp
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    deploy:
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        parallelism: 2
+        delay: 10s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    deploy:
+      replicas: 1  # Пока оставляем 1 реплику для Redis
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  redis_data:
+
+networks:
+  app-network:
+    driver: overlay
+    attachable: true
