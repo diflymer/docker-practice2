@@ -1,5 +1,4 @@
-Registry:
-(screenshots/registry.png)
+![Registry:](screenshots/registry.png)
 
 Auth:
 Тест 1: Без аутентификации
